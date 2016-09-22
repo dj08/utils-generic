@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Simple emacs based utility to indent a single file.
+# Indent, but without translating tabs to spaces
+\emacs --batch "$@" \
+       --eval "(progn (delete-trailing-whitespace (point-min) (point-max)) (indent-region (point-min) (point-max)) (save-buffer))"
