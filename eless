@@ -11,8 +11,18 @@
 # A solution can be done using emacsclient, but that can get overly
 # complicated for something simple.
 
+# Usage
+#   eless foo.txt
+#   cat foo.txt | eless 
+#   cat foo.txt | eless - # if you want to be more conservative
+
 # h opens help. q quits the buffer. Most bindings are like less + emacs.
 
+# Several links that can be useful when enhancing this:
+# [[http://stackoverflow.com/questions/8406721/using-emacs-for-pager][emacs as $PAGER]]
+# [[http://unix.stackexchange.com/questions/36403/portability-of-dev-stdout][Concerns on /dev/ usage]]
+# [[http://stackoverflow.com/questions/15330402/dev-stdin-with-herestring][even more concerns]]
+ 
 function eless_basic { # Basic emacs function to provide 'less'-like capability
   # Using '-nw' gives the error:
   # emacs: standard input is not a tty
