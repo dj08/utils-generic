@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+# Documentation
+
+# Simple utility to use basic emacs like less. Significant code
+# borrowed from kaushalmodi.
+# It opens a new file or stdin/pipe in emacs view-mode, with special
+# keybinds.
+
+# The -nw caveat exists - you cannot open it within the
+# terminal. Sorry, PuTTY.
+# A solution can be done using emacsclient, but that can get overly
+# complicated for something simple.
+
+# h opens help. q quits the buffer. Most bindings are like less + emacs.
+
+function eless_basic { # Basic emacs function to provide 'less'-like capability
+  # Using '-nw' gives the error:
+  # emacs: standard input is not a tty
+  # \emacs -Q -nw "$@"
+  \emacs -Q "$@" \
+         -f view-mode \
+         --eval '(define-key view-mode-map (kbd "q") (quote save-buffers-kill-emacs))' \
+           > /dev/null 2>&1
+}
+
+# If the argument is '-' then write stdin to a $tempfile and open the $tempfile.
+if ([[ $# -ge 1 ]] && [[ "$1" == - ]]) || [[ -t 1 ]]; then
+  if [[ -e /dev/stdin ]]; then # If stdin exists, use it. Else use tmpfile approach.
+    eless_basic --insert /dev/stdin \
+                --eval '(progn (set-visited-file-name nil) (rename-buffer "*stdin*" :unique))'
+  else
+    tempfile="$(mktemp emacs-stdin-$USER.XXXXXXX --tmpdir)"
+    cat - > "$tempfile"
+    echo "$tempfile"
+    eless_basic "$tempfile" \
+                --eval '(progn (set-visited-file-name nil) (rename-buffer "*stdin*" :unique))'
+  fi
+else
+    eless_basic "$@"
+fi
